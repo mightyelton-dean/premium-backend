@@ -58,7 +58,7 @@ class AuthController {
     }
   }
 
-  async protect(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+  async protect(req: AuthenticatedRequest, _res: Response, next: NextFunction) {
     try {
       let token;
       if (req.headers.authorization?.startsWith("Bearer")) {

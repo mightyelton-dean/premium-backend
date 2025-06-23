@@ -8,11 +8,11 @@ export const postExpertTip = async (req: Request, res: Response) => {
     const tip = await ExpertTip.create({
       title,
       content,
-      author: req.user._id,
+      author: req.user?._id,
     });
-    res.status(201).json({ message: "Expert tip posted", tip });
+    return res.status(201).json({ message: "Expert tip posted", tip });
   } catch (err) {
-    res.status(500).json({ message: "Failed to post expert tip" });
+    return res.status(500).json({ message: "Failed to post expert tip" });
   }
 };
 
@@ -22,29 +22,29 @@ export const postVIPContent = async (req: Request, res: Response) => {
     const vipContent = await VIPContent.create({
       title,
       content,
-      author: req.user._id,
+      author: req.user?._id,
     });
-    res.status(201).json({ message: "VIP content posted", vipContent });
+    return res.status(201).json({ message: "VIP content posted", vipContent });
   } catch (err) {
-    res.status(500).json({ message: "Failed to post VIP content" });
+    return res.status(500).json({ message: "Failed to post VIP content" });
   }
 };
 
-export const getExpertTips = async (req: Request, res: Response) => {
+export const getExpertTips = async (_req: Request, res: Response) => {
   try {
     const tips = await ExpertTip.find().sort({ createdAt: -1 });
-    res.status(200).json({ tips });
+    return res.status(200).json({ tips });
   } catch (err) {
-    res.status(500).json({ message: "Failed to fetch expert tips" });
+    return res.status(500).json({ message: "Failed to fetch expert tips" });
   }
 };
 
-export const getVIPContent = async (req: Request, res: Response) => {
+export const getVIPContent = async (_req: Request, res: Response) => {
   try {
     const vipContent = await VIPContent.find().sort({ createdAt: -1 });
-    res.status(200).json({ vipContent });
+    return res.status(200).json({ vipContent });
   } catch (err) {
-    res.status(500).json({ message: "Failed to fetch VIP content" });
+    return res.status(500).json({ message: "Failed to fetch VIP content" });
   }
 };
 
@@ -52,9 +52,9 @@ export const deleteExpertTip = async (req: Request, res: Response) => {
   try {
     const tip = await ExpertTip.findByIdAndDelete(req.params.id);
     if (!tip) return res.status(404).json({ message: "Not found" });
-    res.status(200).json({ message: "Expert tip deleted" });
+    return res.status(200).json({ message: "Expert tip deleted" });
   } catch (err) {
-    res.status(500).json({ message: "Failed to delete expert tip" });
+    return res.status(500).json({ message: "Failed to delete expert tip" });
   }
 };
 
@@ -62,9 +62,9 @@ export const deleteVIPContent = async (req: Request, res: Response) => {
   try {
     const vip = await VIPContent.findByIdAndDelete(req.params.id);
     if (!vip) return res.status(404).json({ message: "Not found" });
-    res.status(200).json({ message: "VIP content deleted" });
+    return res.status(200).json({ message: "VIP content deleted" });
   } catch (err) {
-    res.status(500).json({ message: "Failed to delete VIP content" });
+    return res.status(500).json({ message: "Failed to delete VIP content" });
   }
 };
 
@@ -80,9 +80,9 @@ export const updateExpertTip = async (req: Request, res: Response) => {
       { new: true }
     );
     if (!tip) return res.status(404).json({ message: "Not found" });
-    res.status(200).json({ message: "Expert tip updated", tip });
+    return res.status(200).json({ message: "Expert tip updated", tip });
   } catch (err) {
-    res.status(500).json({ message: "Failed to update expert tip" });
+    return res.status(500).json({ message: "Failed to update expert tip" });
   }
 };
 
@@ -98,8 +98,8 @@ export const updateVIPContent = async (req: Request, res: Response) => {
       { new: true }
     );
     if (!vip) return res.status(404).json({ message: "Not found" });
-    res.status(200).json({ message: "VIP content updated", vip });
+    return res.status(200).json({ message: "VIP content updated", vip });
   } catch (err) {
-    res.status(500).json({ message: "Failed to update VIP content" });
+    return res.status(500).json({ message: "Failed to update VIP content" });
   }
 };

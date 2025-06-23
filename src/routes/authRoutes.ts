@@ -1,6 +1,7 @@
 import express from "express";
 import AuthController from "../controllers/authController";
-import { body } from "express-validator";
+import expressValidator from "express-validator";
+const { body } = expressValidator;
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.post(
     body("username").trim().notEmpty().isLength({ min: 3, max: 20 }),
     body("email").isEmail().normalizeEmail(),
     body("password").isLength({ min: 8 }),
-    body("passwordConfirm").custom((value, { req }) => {
+    body("passwordConfirm").custom((value: any, { req }: any) => {
       if (value !== req.body.password) {
         throw new Error("Password confirmation does not match password");
       }
@@ -79,7 +80,7 @@ router.post(
   "/reset-password/:token",
   [
     body("password").isLength({ min: 8 }),
-    body("passwordConfirm").custom((value, { req }) => {
+    body("passwordConfirm").custom((value: any, { req }: any) => {
       if (value !== req.body.password) {
         throw new Error("Password confirmation does not match password");
       }
@@ -95,7 +96,7 @@ router.post(
   [
     body("currentPassword").notEmpty(),
     body("newPassword").isLength({ min: 8 }),
-    body("passwordConfirm").custom((value, { req }) => {
+    body("passwordConfirm").custom((value: any, { req }: any) => {
       if (value !== req.body.newPassword) {
         throw new Error("Password confirmation does not match new password");
       }

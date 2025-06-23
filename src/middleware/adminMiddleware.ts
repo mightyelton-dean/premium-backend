@@ -20,7 +20,7 @@ export const adminMiddleware = async (
       return res.status(403).json({ message: "Admin access required" });
     }
     req.user = user;
-    next();
+    return next();
   } catch (err) {
     return res.status(401).json({ message: "Not authorized as admin" });
   }

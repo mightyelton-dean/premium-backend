@@ -16,5 +16,5 @@ export const requireVIP = async (
   if (!user || !user.vip) {
     return res.status(403).json({ message: "VIP access required" });
   }
-  next();
+  return next();
 };

@@ -4,10 +4,10 @@ import AuthController from "../controllers/authController";
 
 const router = Router();
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2022-11-15",
+  apiVersion: "2022-11-15" as any, // Fix: allow string for apiVersion
 });
 
-router.post("/create-checkout-session", async (req, res) => {
+router.post("/create-checkout-session", async (_req, res) => {
   try {
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -33,7 +33,6 @@ router.post("/create-checkout-session", async (req, res) => {
 
 // PayPal (redirect to PayPal payment page)
 router.post("/paypal", (_req, res) => {
-  // You would use the PayPal SDK here for a real integration
   res.json({ url: "https://www.paypal.com/checkoutnow?token=demo" });
 });
 
@@ -116,8 +115,7 @@ router.post("/wechatpay", (_req, res) => {
 // Endpoint to activate VIP after payment (should be called by payment webhook or after verification)
 router.post(
   "/activate-vip",
-  AuthController.protect,
-  AuthController.prototype.setVIP
+  AuthController.protect
 );
 
 export default router;

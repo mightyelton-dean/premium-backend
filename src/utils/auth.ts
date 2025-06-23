@@ -1,5 +1,5 @@
 import { Response } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { Secret, SignOptions } from "jsonwebtoken";
 import { JWT_SECRET, JWT_EXPIRES_IN, COOKIE_EXPIRES_IN } from "../config";
 
 export const createSendToken = (
@@ -30,7 +30,9 @@ export const createSendToken = (
 };
 
 const signToken = (id: string) => {
-  return jwt.sign({ id }, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN, // edit in config or .env
-  });
+  return jwt.sign(
+    { id },
+    JWT_SECRET as Secret,
+    { expiresIn: JWT_EXPIRES_IN as string } as SignOptions
+  );
 };

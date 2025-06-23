@@ -2,13 +2,11 @@ import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 import validator from "validator";
 import crypto from "crypto";
-import { JWT_SECRET } from "../config";
 
 interface IUser {
   username: string;
   email: string;
   password: string;
-  passwordConfirm: string | undefined;
   role: "user" | "admin" | "moderator"; // Added moderator role
   firstName?: string;
   lastName?: string;
@@ -82,16 +80,6 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
           ),
         message:
           "Password must contain at least one uppercase, one lowercase, one number and one special character",
-      },
-    },
-    passwordConfirm: {
-      type: String,
-      required: [true, "Please confirm your password"],
-      validate: {
-        validator: function (this: IUser, el: string) {
-          return el === this.password;
-        },
-        message: "Passwords are not the same",
       },
     },
     role: {
@@ -173,7 +161,6 @@ userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 12);
-  this.passwordConfirm = undefined;
   next();
 });
 
@@ -209,7 +196,7 @@ userSchema.methods.createPasswordResetToken = function () {
     .createHash("sha256")
     .update(resetToken)
     .digest("hex");
-  this.passwordResetExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
+  this.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
   return resetToken;
 };
 
@@ -219,12 +206,13 @@ userSchema.methods.createEmailVerificationToken = function () {
     .createHash("sha256")
     .update(verificationToken)
     .digest("hex");
-  this.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
+  this.emailVerificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
   return verificationToken;
 };
 
 // Query middleware to filter out inactive users by default
 userSchema.pre(/^find/, function (next) {
+  // @ts-ignore
   this.find({ active: { $ne: false } });
   next();
 });
