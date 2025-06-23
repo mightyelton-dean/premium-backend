@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    /* Basic Options */
+    "target": "ES2022", // Modern ECMAScript version
+    "module": "commonjs", // For Node.js compatibility
+    "outDir": "./dist", // Output directory
+    "rootDir": "./src", // Source directory
+    "strict": true, // Enable all strict type checks
+    "esModuleInterop": true, // Better ES module compatibility
+    "skipLibCheck": true, // Skip library declaration checks
+    "forceConsistentCasingInFileNames": true, // Case-sensitive file names
+
+    /* Type Checking */
+    "noImplicitAny": true, // Error on implicit 'any' types
+    "strictNullChecks": true, // Strict null checking
+    "strictFunctionTypes": true, // Strict function type checking
+    "strictBindCallApply": true, // Strict bind/call/apply checks
+    "noImplicitThis": true, // Error on implicit 'this'
+    "alwaysStrict": true, // Always emit "use strict"
+
+    /* Module Resolution */
+    "moduleResolution": "node", // Node.js-style module resolution
+    "baseUrl": "./", // Base directory for imports
+    "paths": {
+      "@config/*": ["src/config/*"], // Path aliases
+      "@controllers/*": ["src/controllers/*"],
+      "@models/*": ["src/models/*"],
+      "@utils/*": ["src/utils/*"]
+    },
+
+    /* Advanced Options */
+    "emitDecoratorMetadata": true, // For decorators (if using)
+    "experimentalDecorators": true, // For decorators (if using)
+    "removeComments": true, // Remove comments in output
+    "sourceMap": true, // Generate source maps
+    "inlineSources": true, // Include sources in source maps
+    "declaration": true, // Generate .d.ts files
+    "noUnusedLocals": true, // Error on unused locals
+    "noUnusedParameters": true, // Error on unused parameters
+    "noImplicitReturns": true, // Error on implicit returns
+    "noFallthroughCasesInSwitch": true // Error on switch fallthrough
+  },
+  "include": ["src/**/*"], // Files to include
+  "exclude": [
+    // Files to exclude
+    "node_modules",
+    "dist",
+    "**/*.spec.ts",
+    "**/*.test.ts"
+  ]
+}
