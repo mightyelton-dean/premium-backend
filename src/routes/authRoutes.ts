@@ -1,7 +1,7 @@
 import express from "express";
 import AuthController from "../controllers/authController";
-import expressValidator from "express-validator";
-const { body } = expressValidator;
+// @ts-ignore
+const { body } = require("express-validator");
 
 const router = express.Router();
 
