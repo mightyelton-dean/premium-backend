@@ -34,6 +34,7 @@ interface IUser {
   active: boolean;
   createdAt: Date;
   updatedAt: Date;
+  vip: boolean; // Added vip field
 }
 
 interface IUserMethods {
@@ -156,6 +157,10 @@ const userSchema = new mongoose.Schema<IUser, UserModel, IUserMethods>(
       type: Boolean,
       default: true,
       select: false,
+    },
+    vip: {
+      type: Boolean,
+      default: false,
     },
   },
   {

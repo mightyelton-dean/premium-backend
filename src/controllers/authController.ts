@@ -1,10 +1,14 @@
 import { Request, Response, NextFunction } from "express";
+// Extend Request type to include user
+interface AuthenticatedRequest extends Request {
+  user?: any;
+}
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import User from "../models/userModel";
 import { createSendToken } from "../utils/auth";
 import AppError from "../utils/appError";
-import { JWT_SECRET, JWT_EXPIRES_IN, COOKIE_EXPIRES_IN } from "../config";
+import { JWT_SECRET } from "../config/index";
 
 class AuthController {
   async signup(req: Request, res: Response, next: NextFunction) {
@@ -54,7 +58,7 @@ class AuthController {
     }
   }
 
-  async protect(req: Request, res: Response, next: NextFunction) {
+  async protect(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
       let token;
       if (req.headers.authorization?.startsWith("Bearer")) {
@@ -91,7 +95,7 @@ class AuthController {
   }
 
   restrictTo(...roles: string[]) {
-    return (req: Request, res: Response, next: NextFunction) => {
+    return (req: AuthenticatedRequest, _res: Response, next: NextFunction) => {
       if (!roles.includes(req.user.role)) {
         return next(
           new AppError("You do not have permission to perform this action", 403)
@@ -104,7 +108,11 @@ class AuthController {
   // NEW METHODS
 
   // Update profile
-  async updateProfile(req: Request, res: Response, next: NextFunction) {
+  async updateProfile(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       // Only allow updating certain fields
       const allowedFields = [
@@ -149,7 +157,7 @@ class AuthController {
         expiresIn: "10m",
       });
       user.passwordResetToken = resetToken;
-      user.passwordResetExpires = Date.now() + 10 * 60 * 1000;
+      user.passwordResetExpires = new Date(Date.now() + 10 * 60 * 1000); // FIXED: assign Date, not number
       await user.save({ validateBeforeSave: false });
 
       // TODO: Send resetToken to user's email (implement mailing)
@@ -196,7 +204,11 @@ class AuthController {
   }
 
   // Change password (when logged in)
-  async changePassword(req: Request, res: Response, next: NextFunction) {
+  async changePassword(
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction
+  ) {
     try {
       const user = await User.findById(req.user._id).select("+password");
       if (!user) {
@@ -217,6 +229,18 @@ class AuthController {
       await user.save();
 
       createSendToken(user, 200, res);
+    } catch (err) {
+      next(err);
+    }
+  }
+
+  // Add this method to update VIP status after payment
+  async setVIP(req: AuthenticatedRequest, res: Response, next: NextFunction) {
+    try {
+      if (!req.user) return next(new AppError("Not authenticated", 401));
+      req.user.vip = true;
+      await req.user.save();
+      res.status(200).json({ message: "VIP status activated" });
     } catch (err) {
       next(err);
     }
